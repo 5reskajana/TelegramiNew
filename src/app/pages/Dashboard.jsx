@@ -12,9 +12,14 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
  
-  const [search,         setSearch]         = useState("");
-  const [filterStatus,   setFilterStatus]   = useState("all");
-  const [filterPriority, setFilterPriority] = useState("all");
+  // ── FILTER STATE ──
+  const [search,       setSearch]       = useState("");
+  const [brojNaAkt,    setBrojNaAkt]    = useState("");
+  const [sifra,        setSifra]        = useState("");
+  const [periodOd,     setPeriodOd]     = useState("");
+  const [periodDo,     setPeriodDo]     = useState("");
+  const [quickFilter,  setQuickFilter]  = useState("all"); // "all" | "active"
+  const [filtersOpen,  setFiltersOpen]  = useState(false);
  
   const inbox    = MOCK_TELEGRAMS.filter((t) => t.folder === "inbox");
   const unread   = inbox.filter((t) => t.status === "UNREAD");
@@ -24,6 +29,7 @@ export default function Dashboard() {
     return [...inbox]
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .filter((t) => {
+        // Search bar — испраќач, наслов, единица, шифра
         const q = search.toLowerCase();
         const matchSearch =
           !q ||
@@ -32,17 +38,39 @@ export default function Dashboard() {
           t.from.dept.toLowerCase().includes(q) ||
           (t.code && t.code.toLowerCase().includes(q));
  
-        const matchStatus =
-          filterStatus === "all" ||
-          (filterStatus === "active"   && t.status === "UNREAD") ||
-          (filterStatus === "inactive" && t.status !== "UNREAD");
+        // Број на акт
+        const matchBroj =
+          !brojNaAkt ||
+          (t.actNumber && t.actNumber.toLowerCase().includes(brojNaAkt.toLowerCase()));
  
-        const matchPriority =
-          filterPriority === "all" || t.priority === filterPriority;
+        // Шифра
+        const matchSifra =
+          !sifra ||
+          (t.code && t.code.toLowerCase().includes(sifra.toLowerCase()));
  
-        return matchSearch && matchStatus && matchPriority;
+        // Период на објава
+        const tDate = new Date(t.date);
+        const matchPeriodOd = !periodOd || tDate >= new Date(periodOd);
+        const matchPeriodDo = !periodDo || tDate <= new Date(periodDo + "T23:59:59");
+ 
+        // Брзи филтри
+        const matchQuick =
+          quickFilter === "all" ||
+          (quickFilter === "active" && t.status === "UNREAD");
+ 
+        return matchSearch && matchBroj && matchSifra && matchPeriodOd && matchPeriodDo && matchQuick;
       });
-  }, [inbox, search, filterStatus, filterPriority]);
+  }, [inbox, search, brojNaAkt, sifra, periodOd, periodDo, quickFilter]);
+ 
+  const hasAdvancedFilters = brojNaAkt || sifra || periodOd || periodDo;
+  const activeFilterCount  =
+    (brojNaAkt ? 1 : 0) + (sifra ? 1 : 0) +
+    (periodOd || periodDo ? 1 : 0) + (quickFilter !== "all" ? 1 : 0);
+ 
+  function clearAllFilters() {
+    setSearch(""); setBrojNaAkt(""); setSifra("");
+    setPeriodOd(""); setPeriodDo(""); setQuickFilter("all");
+  }
  
   function getInitials(name = "") {
     return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
@@ -57,16 +85,6 @@ export default function Dashboard() {
     { bg: "#cffafe", color: "#0e7490" },
   ];
   function getAvatarColor(i) { return avatarColors[i % avatarColors.length]; }
- 
-  const activeFilters =
-    (filterStatus !== "all" ? 1 : 0) +
-    (filterPriority !== "all" ? 1 : 0);
- 
-  function clearFilters() {
-    setFilterStatus("all");
-    setFilterPriority("all");
-    setSearch("");
-  }
  
   return (
     <div className="dashboard-page">
@@ -121,16 +139,12 @@ export default function Dashboard() {
       <div className="card">
         <div className="card-header">
           <span className="card-title">Сандаче</span>
-          <button
-            className="btn btn-ghost"
-            style={{ fontSize: 11, padding: "5px 12px" }}
-            onClick={() => navigate("/inbox")}
-          >
+          <button className="btn btn-ghost" style={{ fontSize: 11, padding: "5px 12px" }} onClick={() => navigate("/inbox")}>
             Види ги сите
           </button>
         </div>
  
-        {/* ── SEARCH + FILTERS ── */}
+        {/* ── SEARCH BAR ── */}
         <div className="search-filter-bar">
           <div className="search-wrap">
             <svg className="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -139,54 +153,101 @@ export default function Dashboard() {
             <input
               className="search-input"
               type="text"
-              placeholder="Пребарај по единица, испраќач, шифра..."
+              placeholder="Пребарај по испраќач, наслов, единица..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            {search && (
-              <button className="search-clear" onClick={() => setSearch("")}>✕</button>
-            )}
+            {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
           </div>
  
-          <div className="filters-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--muted)", flexShrink: 0 }}>
+          {/* ── QUICK FILTER PILLS ── */}
+          <div className="quick-pills">
+            <button
+              className={`pill ${quickFilter === "all" ? "pill-active" : ""}`}
+              onClick={() => setQuickFilter("all")}
+            >
+              Сите
+            </button>
+            <button
+              className={`pill ${quickFilter === "active" ? "pill-active" : ""}`}
+              onClick={() => setQuickFilter("active")}
+            >
+              Активни
+            </button>
+          </div>
+ 
+          {/* ── TOGGLE ADVANCED FILTERS ── */}
+          <button
+            className={`btn-filter-toggle ${filtersOpen ? "open" : ""} ${hasAdvancedFilters ? "has-filters" : ""}`}
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
             </svg>
+            Филтри
+            {activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 2, transition: "transform 0.2s", transform: filtersOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        </div>
  
-            <select
-              className="filter-select"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">Сите статуси</option>
-              <option value="active">Активни</option>
-              <option value="inactive">Неактивни</option>
-            </select>
+        {/* ── ADVANCED FILTERS PANEL ── */}
+        {filtersOpen && (
+          <div className="advanced-filters">
+            <div className="adv-filters-grid">
  
-            <select
-              className="filter-select"
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-            >
-              <option value="all">Сите приоритети</option>
-              <option value="URGENT">Итно</option>
-              <option value="NORMAL">Редовно</option>
-              <option value="LOW">Ниско</option>
-            </select>
+              <div className="adv-field">
+                <label>Број на акт</label>
+                <input
+                  type="text"
+                  placeholder="пр. 2024/0042"
+                  value={brojNaAkt}
+                  onChange={(e) => setBrojNaAkt(e.target.value)}
+                />
+              </div>
  
-            {(activeFilters > 0 || search) && (
-              <button className="btn-clear-filters" onClick={clearFilters}>
-                Исчисти
-                {activeFilters > 0 && (
-                  <span className="filter-count">{activeFilters}</span>
-                )}
+              <div className="adv-field">
+                <label>Шифра</label>
+                <input
+                  type="text"
+                  placeholder="пр. FIN-001"
+                  value={sifra}
+                  onChange={(e) => setSifra(e.target.value)}
+                />
+              </div>
+ 
+              <div className="adv-field">
+                <label>Период — од</label>
+                <input
+                  type="date"
+                  value={periodOd}
+                  onChange={(e) => setPeriodOd(e.target.value)}
+                />
+              </div>
+ 
+              <div className="adv-field">
+                <label>Период — до</label>
+                <input
+                  type="date"
+                  value={periodDo}
+                  onChange={(e) => setPeriodDo(e.target.value)}
+                />
+              </div>
+ 
+            </div>
+ 
+            {activeFilterCount > 0 && (
+              <button className="btn-clear-filters" onClick={clearAllFilters}>
+                Исчисти ги сите филтри
+                <span className="filter-count">{activeFilterCount}</span>
               </button>
             )}
           </div>
-        </div>
+        )}
  
         {/* ── RESULTS INFO ── */}
-        {(search || filterStatus !== "all" || filterPriority !== "all") && (
+        {(search || activeFilterCount > 0) && (
           <div className="results-info">
             Прикажани <strong>{filtered.length}</strong> од <strong>{inbox.length}</strong> телеграми
           </div>
@@ -213,7 +274,8 @@ export default function Dashboard() {
                   <div className="tele-meta">
                     <span className="tele-from">{t.from.name}</span>
                     <span className="tele-dept">{t.from.dept}</span>
-                    {t.code && <span className="tele-code">{t.code}</span>}
+                    {t.code       && <span className="tele-code">{t.code}</span>}
+                    {t.actNumber  && <span className="tele-act">Акт: {t.actNumber}</span>}
                   </div>
                   <div className="tele-subject">{t.subject}</div>
                   <div className="tele-preview">{t.body}</div>
@@ -232,4 +294,3 @@ export default function Dashboard() {
     </div>
   );
 }
- 
