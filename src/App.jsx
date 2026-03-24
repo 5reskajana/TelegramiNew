@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Login from "./app/pages/Login";
 import Dashboard from "./app/pages/Dashboard";
 import Compose from "./app/pages/Compose";
+import ActiveTelegrams from "./app/pages/ActiveTelegrams";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,7 +20,8 @@ function App() {
         
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/compose" element={<Compose />} />
-        
+        <Route path="/inbox"     element={<ActiveTelegrams />} />
+        <Route path="*"          element={<Navigate to="/dashboard" replace />} />
         {/* Catch-all for 404s */}
         <Route path="*" element={
           <div style={{ padding: 32 }}>

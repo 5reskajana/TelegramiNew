@@ -13,7 +13,6 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Data Filtering
   const inbox  = MOCK_TELEGRAMS.filter((t) => t.folder === "inbox");
   const unread = inbox.filter((t) => t.status === "UNREAD");
   const sent   = MOCK_TELEGRAMS.filter((t) => t.folder === "sent");
@@ -36,7 +35,7 @@ export default function Dashboard() {
       {/* ── STATS ── */}
       <div className="stats-grid">
         <div className="stat-card accent-red" onClick={() => navigate("/inbox")}>
-          <div className="stat-label">Непрочитани</div>
+          <div className="stat-label">Активни</div>
           <div className={`stat-value ${unread.length > 0 ? "urgent" : ""}`}>{unread.length}</div>
           <div className="stat-sub">во твоето сандаче</div>
         </div>
