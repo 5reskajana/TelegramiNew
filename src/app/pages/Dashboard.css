@@ -1,0 +1,203 @@
+/* ── LAYOUT ───────────────────────────────────────────── */
+
+.dashboard-page {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  background: var(--cream);
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px;
+  color: var(--navy);
+  font-weight: 400;
+}
+.page-header p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── STATS ────────────────────────────────────────────── */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+}
+.stat-card.accent-red::after   { background: var(--red); }
+.stat-card.accent-navy::after  { background: var(--navy); }
+.stat-card.accent-green::after { background: var(--green); }
+
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stat-value {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 36px;
+  color: var(--navy);
+  margin: 6px 0 2px;
+  line-height: 1;
+}
+.stat-value.urgent { color: var(--red); }
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── MAIN GRID ────────────────────────────────────────── */
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+}
+
+/* ── TELEGRAM ROWS ────────────────────────────────────── */
+
+.tele-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--warm);
+  cursor: pointer;
+  transition: background 0.1s;
+  gap: 12px;
+}
+.tele-row:last-child { border-bottom: none; }
+.tele-row:hover { background: #ede9e1; }
+.tele-row.unread {
+  background: #eef4fb; /* светло сино наместо крем — јасна разлика */
+  border-left: 3px solid var(--navy);
+  padding-left: 17px; /* компензирај за border-left */
+}
+.tele-row.unread:hover {
+  background: #ddeaf7; /* посилно сино на hover */
+}
+.tele-row.unread .tele-subject { font-weight: 600; color: var(--navy); }
+
+.tele-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.tele-info { flex: 1; min-width: 0; }
+.tele-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+.tele-from  { font-size: 12px; font-weight: 600; color: var(--navy); }
+.tele-dept  { font-size: 10px; color: var(--muted); }
+.tele-subject {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tele-preview {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+.tele-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.tele-date { font-size: 11px; color: var(--muted); }
+
+.priority-badge {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+/* ── RIGHT COLUMN ─────────────────────────────────────── */
+
+.right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── ACTIVITY ─────────────────────────────────────────── */
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--warm);
+  font-size: 12px;
+}
+.activity-item:last-child { border-bottom: none; }
+
+.activity-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.activity-text {
+  flex: 1;
+  line-height: 1.5;
+  color: var(--text);
+}
+.activity-text strong { color: var(--navy); font-weight: 600; }
+.activity-time { font-size: 10px; color: var(--muted); white-space: nowrap; }
+
+/* ── QUICK ACTIONS ────────────────────────────────────── */
+
+.quick-actions {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
