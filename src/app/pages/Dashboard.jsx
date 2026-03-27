@@ -2,16 +2,17 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./Dashboard.css";
+import TelegramModal from "../pages/TelegramModal";
 import {
   CURRENT_USER,
   MOCK_TELEGRAMS,
   STATUS_CONFIG,
   formatDate
 } from "../../data/Mockdata";
- 
+
 export default function Dashboard() {
   const navigate = useNavigate();
- 
+
   // ── FILTER STATE ──
   const [search,       setSearch]       = useState("");
   const [brojNaAkt,    setBrojNaAkt]    = useState("");
@@ -20,16 +21,16 @@ export default function Dashboard() {
   const [periodDo,     setPeriodDo]     = useState("");
   const [quickFilter,  setQuickFilter]  = useState("all"); // "all" | "active"
   const [filtersOpen,  setFiltersOpen]  = useState(false);
- 
+  const [selectedId,   setSelectedId]   = useState(null);
+
   const inbox    = MOCK_TELEGRAMS.filter((t) => t.folder === "inbox");
   const unread   = inbox.filter((t) => t.status === "UNREAD");
   const archived = MOCK_TELEGRAMS.filter((t) => t.folder === "archived");
- 
+
   const filtered = useMemo(() => {
     return [...inbox]
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .filter((t) => {
-        // Search bar — испраќач, наслов, единица, шифра
         const q = search.toLowerCase();
         const matchSearch =
           !q ||
@@ -37,45 +38,41 @@ export default function Dashboard() {
           t.from.name.toLowerCase().includes(q) ||
           t.from.dept.toLowerCase().includes(q) ||
           (t.code && t.code.toLowerCase().includes(q));
- 
-        // Број на акт
+
         const matchBroj =
           !brojNaAkt ||
           (t.actNumber && t.actNumber.toLowerCase().includes(brojNaAkt.toLowerCase()));
- 
-        // Шифра
+
         const matchSifra =
           !sifra ||
           (t.code && t.code.toLowerCase().includes(sifra.toLowerCase()));
- 
-        // Период на објава
+
         const tDate = new Date(t.date);
         const matchPeriodOd = !periodOd || tDate >= new Date(periodOd);
         const matchPeriodDo = !periodDo || tDate <= new Date(periodDo + "T23:59:59");
- 
-        // Брзи филтри
+
         const matchQuick =
           quickFilter === "all" ||
           (quickFilter === "active" && t.status === "UNREAD");
- 
+
         return matchSearch && matchBroj && matchSifra && matchPeriodOd && matchPeriodDo && matchQuick;
       });
   }, [inbox, search, brojNaAkt, sifra, periodOd, periodDo, quickFilter]);
- 
+
   const hasAdvancedFilters = brojNaAkt || sifra || periodOd || periodDo;
   const activeFilterCount  =
     (brojNaAkt ? 1 : 0) + (sifra ? 1 : 0) +
     (periodOd || periodDo ? 1 : 0) + (quickFilter !== "all" ? 1 : 0);
- 
+
   function clearAllFilters() {
     setSearch(""); setBrojNaAkt(""); setSifra("");
     setPeriodOd(""); setPeriodDo(""); setQuickFilter("all");
   }
- 
+
   function getInitials(name = "") {
     return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
   }
- 
+
   const avatarColors = [
     { bg: "#dbeafe", color: "#1d4ed8" },
     { bg: "#dcfce7", color: "#15803d" },
@@ -85,10 +82,10 @@ export default function Dashboard() {
     { bg: "#cffafe", color: "#0e7490" },
   ];
   function getAvatarColor(i) { return avatarColors[i % avatarColors.length]; }
- 
+
   return (
     <div className="dashboard-page">
- 
+
       {/* ── HEADER ── */}
       <div className="page-header">
         <div>
@@ -96,7 +93,7 @@ export default function Dashboard() {
           <p>Управувај со твоите телеграми</p>
         </div>
       </div>
- 
+
       {/* ── STATS ── */}
       <div className="stats-grid">
         <div className="stat-card stat-active" onClick={() => navigate("/inbox")}>
@@ -109,7 +106,7 @@ export default function Dashboard() {
           <div className="stat-label">Активни телеграми</div>
           <div className="stat-sub">непрочитани во сандаче</div>
         </div>
- 
+
         <div className="stat-card stat-inactive" onClick={() => navigate("/archived")}>
           <div className="stat-icon-wrap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -121,7 +118,7 @@ export default function Dashboard() {
           <div className="stat-sub">архивирани</div>
         </div>
       </div>
- 
+
       {/* ── QUICK ACTIONS ── */}
       <div className="quick-actions-bar">
         <button className="btn btn-primary" onClick={() => navigate("/compose")}>
@@ -134,7 +131,7 @@ export default function Dashboard() {
         <button className="btn btn-ghost" onClick={() => navigate("/drafts")}>Отвори нацрти</button>
         <button className="btn btn-ghost" onClick={() => navigate("/archived")}>Архивирани телеграми</button>
       </div>
- 
+
       {/* ── INBOX CARD ── */}
       <div className="card">
         <div className="card-header">
@@ -143,7 +140,7 @@ export default function Dashboard() {
             Види ги сите
           </button>
         </div>
- 
+
         {/* ── SEARCH BAR ── */}
         <div className="search-filter-bar">
           <div className="search-wrap">
@@ -159,7 +156,7 @@ export default function Dashboard() {
             />
             {search && <button className="search-clear" onClick={() => setSearch("")}>✕</button>}
           </div>
- 
+
           {/* ── QUICK FILTER PILLS ── */}
           <div className="quick-pills">
             <button
@@ -175,7 +172,7 @@ export default function Dashboard() {
               Активни
             </button>
           </div>
- 
+
           {/* ── TOGGLE ADVANCED FILTERS ── */}
           <button
             className={`btn-filter-toggle ${filtersOpen ? "open" : ""} ${hasAdvancedFilters ? "has-filters" : ""}`}
@@ -186,17 +183,18 @@ export default function Dashboard() {
             </svg>
             Филтри
             {activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 2, transition: "transform 0.2s", transform: filtersOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              style={{ marginLeft: 2, transition: "transform 0.2s", transform: filtersOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
         </div>
- 
+
         {/* ── ADVANCED FILTERS PANEL ── */}
         {filtersOpen && (
           <div className="advanced-filters">
             <div className="adv-filters-grid">
- 
+
               <div className="adv-field">
                 <label>Број на акт</label>
                 <input
@@ -206,7 +204,7 @@ export default function Dashboard() {
                   onChange={(e) => setBrojNaAkt(e.target.value)}
                 />
               </div>
- 
+
               <div className="adv-field">
                 <label>Шифра</label>
                 <input
@@ -216,7 +214,7 @@ export default function Dashboard() {
                   onChange={(e) => setSifra(e.target.value)}
                 />
               </div>
- 
+
               <div className="adv-field">
                 <label>Период — од</label>
                 <input
@@ -225,7 +223,7 @@ export default function Dashboard() {
                   onChange={(e) => setPeriodOd(e.target.value)}
                 />
               </div>
- 
+
               <div className="adv-field">
                 <label>Период — до</label>
                 <input
@@ -234,9 +232,9 @@ export default function Dashboard() {
                   onChange={(e) => setPeriodDo(e.target.value)}
                 />
               </div>
- 
+
             </div>
- 
+
             {activeFilterCount > 0 && (
               <button className="btn-clear-filters" onClick={clearAllFilters}>
                 Исчисти ги сите филтри
@@ -245,14 +243,14 @@ export default function Dashboard() {
             )}
           </div>
         )}
- 
+
         {/* ── RESULTS INFO ── */}
         {(search || activeFilterCount > 0) && (
           <div className="results-info">
             Прикажани <strong>{filtered.length}</strong> од <strong>{inbox.length}</strong> телеграми
           </div>
         )}
- 
+
         {/* ── TELEGRAM ROWS ── */}
         {filtered.length === 0 ? (
           <div className="empty-state">
@@ -266,7 +264,11 @@ export default function Dashboard() {
             const active = t.status === "UNREAD";
             const av     = getAvatarColor(i);
             return (
-              <div key={t.id} className={`tele-row ${active ? "unread" : ""}`}>
+              <div
+                key={t.id}
+                className={`tele-row ${active ? "unread" : ""}`}
+                onClick={() => setSelectedId(t.telegramaId ?? t.id)}
+              >
                 <div className="tele-avatar" style={{ background: av.bg, color: av.color }}>
                   {getInitials(t.from.name)}
                 </div>
@@ -274,8 +276,8 @@ export default function Dashboard() {
                   <div className="tele-meta">
                     <span className="tele-from">{t.from.name}</span>
                     <span className="tele-dept">{t.from.dept}</span>
-                    {t.code       && <span className="tele-code">{t.code}</span>}
-                    {t.actNumber  && <span className="tele-act">Акт: {t.actNumber}</span>}
+                    {t.code      && <span className="tele-code">{t.code}</span>}
+                    {t.actNumber && <span className="tele-act">Акт: {t.actNumber}</span>}
                   </div>
                   <div className="tele-subject">{t.subject}</div>
                   <div className="tele-preview">{t.body}</div>
@@ -291,6 +293,15 @@ export default function Dashboard() {
           })
         )}
       </div>
+
+      {/* ── TELEGRAM MODAL ── */}
+      {selectedId && (
+        <TelegramModal
+          telegramaId={selectedId}
+          onClose={() => setSelectedId(null)}
+        />
+      )}
+
     </div>
   );
 }

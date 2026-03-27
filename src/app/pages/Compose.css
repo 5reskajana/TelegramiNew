@@ -210,3 +210,100 @@
   .compose-footer-right { justify-content: stretch; }
   .compose-footer-right .btn { flex: 1; justify-content: center; }
 }
+.req {
+  color: #b91c1c;
+  margin-left: 2px;
+}
+ 
+/* ── ПОЛЕ HINT (текст под полето) ────────────────────── */
+.field-hint {
+  font-size: 11px;
+  color: #8a9bb0;
+  margin-top: 2px;
+  display: block;
+}
+ 
+/* ── ПОЛЕ ГРЕШКА (валидација) ─────────────────────────── */
+.field-error {
+  font-size: 11px;
+  color: #b91c1c;
+  margin-top: 2px;
+  display: block;
+}
+ 
+/* ── EMAIL CHIP BOX (контејнер со чипови + input) ──────── */
+.email-chip-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid #dde3ed;
+  border-radius: 8px;
+  padding: 7px 12px;
+  min-height: 44px;
+  background: #f4f6f9;
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+ 
+.email-chip-box:focus-within {
+  border-color: #0f2035;
+  box-shadow: 0 0 0 3px rgba(15, 32, 53, 0.08);
+  background: #fff;
+}
+ 
+.email-chip-box--error {
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.08);
+}
+ 
+/* ── ПОЕДИНЕЧЕН EMAIL ЧИП ─────────────────────────────── */
+.email-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #eef1f6;
+  color: #0f2035;
+  border: 1.5px solid #dde3ed;
+  border-radius: 20px;
+  padding: 3px 10px 3px 12px;
+  font-size: 12px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  gap: 6px;
+  white-space: nowrap;
+}
+ 
+.email-chip-remove {
+  background: none;
+  border: none;
+  color: #8a9bb0;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+ 
+.email-chip-remove:hover {
+  color: #b91c1c;
+}
+ 
+/* ── INPUT ВНАТРЕ ВО ЧИП БОКСОТ ──────────────────────── */
+.email-chip-input {
+  flex: 1;
+  min-width: 200px;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-family: 'Source Sans 3', sans-serif;
+  background: transparent;
+  color: #0f2035;
+  padding: 2px 0;
+}
+ 
+.email-chip-input::placeholder {
+  color: #b0bbc9;
+}
+ 

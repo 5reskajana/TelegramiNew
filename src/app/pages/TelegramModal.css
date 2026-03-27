@@ -1,0 +1,148 @@
+.tm-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(15, 32, 53, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 24px;
+}
+
+.tm-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%; max-width: 620px;
+  max-height: 88vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(15, 32, 53, 0.28);
+  overflow: hidden;
+  animation: tm-in 0.18s ease;
+}
+@keyframes tm-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── HEADER ── */
+.tm-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1.5px solid #eef1f6;
+  background: #0f2035;
+  flex-shrink: 0;
+}
+.tm-header-left {
+  display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.85);
+}
+.tm-title { font-size: 14px; font-weight: 600; color: #fff; }
+.tm-close {
+  background: rgba(255,255,255,0.1); border: none; cursor: pointer;
+  color: rgba(255,255,255,0.7); font-size: 13px;
+  padding: 5px 8px; border-radius: 6px; line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+.tm-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+/* ── BODY ── */
+.tm-body { padding: 22px; overflow-y: auto; flex: 1; }
+
+/* ── STATES ── */
+.tm-state {
+  display: flex; align-items: center; gap: 12px;
+  color: #6b7a90; font-size: 13px; padding: 32px 0;
+  justify-content: center;
+}
+.tm-spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #dde3ed; border-top-color: #0f2035;
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.tm-error {
+  color: #b91c1c; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 8px;
+  padding: 12px 16px; font-size: 13px;
+}
+
+/* ── ID ROW ── */
+.tm-id-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 18px;
+}
+.tm-id-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #8a9bb0;
+}
+.tm-id-value {
+  font-size: 13px; font-weight: 700; color: #0f2035;
+  background: #eef1f6; padding: 2px 10px;
+  border-radius: 20px;
+}
+
+/* ── FIELDS GRID ── */
+.tm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+@media (max-width: 480px) { .tm-grid { grid-template-columns: 1fr; } }
+
+.tm-field { display: flex; flex-direction: column; gap: 5px; }
+.tm-field-full { grid-column: 1 / -1; }
+
+.tm-field-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #8a9bb0;
+}
+.tm-field-value {
+  font-size: 13px; color: #0f2035;
+  background: #f4f6f9; padding: 8px 12px;
+  border-radius: 8px; border: 1px solid #eef1f6;
+}
+.tm-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  background: #0f2035; color: #fff;
+  padding: 4px 12px; border-radius: 20px; width: fit-content;
+}
+
+/* ── DOCUMENTS ── */
+.tm-section {
+  border-top: 1.5px solid #eef1f6; padding-top: 18px;
+}
+.tm-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #6b7a90; margin-bottom: 12px;
+}
+.tm-doc-count {
+  background: #0f2035; color: #fff;
+  border-radius: 20px; padding: 1px 8px;
+  font-size: 10px; font-weight: 700;
+}
+.tm-docs { display: flex; flex-direction: column; gap: 8px; }
+.tm-doc-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px;
+  background: #f4f6f9; border: 1px solid #eef1f6;
+}
+.tm-doc-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: #dde3ed; display: flex;
+  align-items: center; justify-content: center;
+  color: #3a4f6b; flex-shrink: 0;
+}
+.tm-doc-name { flex: 1; font-size: 12px; color: #1a2e45; }
+.tm-doc-link {
+  font-size: 11px; font-weight: 600; color: #0f2035;
+  text-decoration: none; padding: 4px 12px;
+  border: 1.5px solid #dde3ed; border-radius: 6px;
+  background: #fff; transition: all 0.15s; flex-shrink: 0;
+}
+.tm-doc-link:hover { background: #0f2035; color: #fff; border-color: #0f2035; }
+
+.tm-no-docs {
+  font-size: 12px; color: #b0bbc9;
+  padding: 12px; text-align: center;
+  background: #f4f6f9; border-radius: 8px;
+}
