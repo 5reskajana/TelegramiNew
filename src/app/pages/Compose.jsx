@@ -21,15 +21,15 @@ const OE_OPTIONS = [
 ];
  
 const PRIORITY_OPTIONS = [
-  { value: "NORMAL", label: "Normalen" },
-  { value: "URGENT", label: "Iten" },
-  { value: "FLASH",  label: "Brisk" },
+  { value: "NORMAL", label: "Нормален" },
+  { value: "URGENT", label: "Итен" },
+  { value: "FLASH",  label: "Премногу важно" },
 ];
  
 const CLASSIFICATION_OPTIONS = [
-  { value: "INTERNAL",              label: "Interno" },
-  { value: "CONFIDENTIAL",          label: "Doverlivo" },
-  { value: "STRICTLY_CONFIDENTIAL", label: "Strogo doverlivo" },
+  { value: "INTERNAL",              label: "Интерно" },
+  { value: "CONFIDENTIAL",          label: "Доверливо" },
+  { value: "STRICTLY_CONFIDENTIAL", label: "Строго доверливо" },
 ];
  
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -59,8 +59,8 @@ export default function Compose() {
   const addEmail = () => {
     const val = emailInput.trim();
     if (!val) return;
-    if (!isValidEmail(val)) { setEmailError("Nevalidna e-mail adresa."); return; }
-    if (emails.includes(val)) { setEmailError("Ovaa adresa veke e dodadena."); return; }
+    if (!isValidEmail(val)) { setEmailError("Невалидна e-mail адреса."); return; }
+    if (emails.includes(val)) { setEmailError("Оваа адреса е веќе додадена."); return; }
     setEmails((prev) => [...prev, val]);
     setEmailInput("");
     setEmailError("");
@@ -89,16 +89,16 @@ export default function Compose() {
  
   const handleSend = () => {
     if (!shifraOe || !datumObjava || !datumVaznost || !isprakjac || !brojNaAkt) {
-      setError("Ve molime popolnete gi site zadolzitelni polinja.");
+      setError("Ве молиме пополнете ги сите задолжителни полиња.");
       return;
     }
     if (emails.length === 0 && !emailInput.trim()) {
-      setError('Dodadete barem edna e-mail adresa vo poleto "Isprati do".');
+      setError('Додадете барем една e-mail адреса во полето "Испрати до".');
       return;
     }
     if (emailInput.trim()) {
       if (!isValidEmail(emailInput.trim())) {
-        setEmailError("Nevalidna e-mail adresa.");
+        setEmailError("Невалидна e-mail адреса.");
         return;
       }
       setEmails((prev) => [...prev, emailInput.trim()]);
@@ -123,19 +123,19 @@ export default function Compose() {
         <div className="compose-success">
           <span className="compose-success-icon">✅</span>
           <div>
-            <strong>Telegramata e uspesno ispratena.</strong>
-            <div style={{ fontSize: 12, marginTop: 4 }}>Referenten broj: {refNo}</div>
+            <strong>Телеграма е успешно испратена.</strong>
+            <div style={{ fontSize: 12, marginTop: 4 }}>Референтен број: {refNo}</div>
             <div style={{ fontSize: 11, opacity: 0.7 }}>
-              Primaci: {emails.join(", ")}
+              Примачи: {emails.join(", ")}
             </div>
             <div style={{ fontSize: 11, opacity: 0.7 }}>
-              Prilozeni datoteki: {attachments.length}
+              Приложени датотеки: {attachments.length}
             </div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button className="btn btn-primary" onClick={handleClear}>Isprati nova</button>
-          <button className="btn btn-ghost" onClick={() => navigate("/dashboard")}>Nazad</button>
+          <button className="btn btn-primary" onClick={handleClear}>Испрати нова</button>
+          <button className="btn btn-ghost" onClick={() => navigate("/dashboard")}>Назад</button>
         </div>
       </div>
     );
@@ -145,10 +145,10 @@ export default function Compose() {
     <div className="compose-page">
       <div className="compose-header">
         <div>
-          <h1>Isprati telegrama</h1>
-          <p>Popolnete gi detalite.</p>
+          <h1>Испрати телеграма</h1>
+          <p>Пополнете ги деталите.</p>
         </div>
-        <button className="btn btn-ghost" onClick={() => navigate(-1)}>← Nazad</button>
+        <button className="btn btn-ghost" onClick={() => navigate(-1)}>← Назад</button>
       </div>
  
       {error && <div className="error-msg">{error}</div>}
@@ -158,9 +158,9 @@ export default function Compose() {
  
           <div className="form-row">
             <div className="compose-field">
-              <label>Shifra na OE <span className="req">*</span></label>
+              <label>Шифра на ОЕ <span className="req">*</span></label>
               <select value={shifraOe} onChange={(e) => setShifraOe(e.target.value)}>
-                <option value="">— Izberete OE —</option>
+                <option value="">— Изберете OE —</option>
                 {OE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
@@ -168,29 +168,29 @@ export default function Compose() {
             </div>
  
             <div className="compose-field">
-              <label>Isprakjac <span className="req">*</span></label>
+              <label>Испраќач <span className="req">*</span></label>
               <input
                 type="text"
                 value={isprakjac}
                 onChange={(e) => setIsprakjac(e.target.value)}
-                placeholder="Ime i prezime / naziv..."
+                placeholder="Име и презиме / назив..."
               />
             </div>
           </div>
  
           <div className="compose-field">
-            <label>Akt-broj <span className="req">*</span></label>
+            <label>Акт број <span className="req">*</span></label>
             <input
               type="text"
               value={brojNaAkt}
               onChange={(e) => setBrojNaAkt(e.target.value)}
-              placeholder="pr. AKT-2024-001"
+              placeholder="пр. AKT-2024-001"
             />
           </div>
  
           <div className="form-row">
             <div className="compose-field">
-              <label>Datum na objava <span className="req">*</span></label>
+              <label>Датум на објава <span className="req">*</span></label>
               <input
                 type="date"
                 value={datumObjava}
@@ -199,7 +199,7 @@ export default function Compose() {
             </div>
  
             <div className="compose-field">
-              <label>Datum na vaznost <span className="req">*</span></label>
+              <label>Датум на важност <span className="req">*</span></label>
               <input
                 type="date"
                 value={datumVaznost}
@@ -210,7 +210,7 @@ export default function Compose() {
  
           <div className="form-row">
             <div className="compose-field">
-              <label>Prioritet</label>
+              <label>Приоритет</label>
               <select value={prioritetShifra} onChange={(e) => setPrioritetShifra(e.target.value)}>
                 {PRIORITY_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -219,7 +219,7 @@ export default function Compose() {
             </div>
  
             <div className="compose-field">
-              <label>Klasifikacija</label>
+              <label>Класификација</label>
               <select value={klasifikacijaShifra} onChange={(e) => setKlasifikacijaShifra(e.target.value)}>
                 {CLASSIFICATION_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -243,7 +243,7 @@ export default function Compose() {
               className="btn btn-ghost btn-attach"
               onClick={() => fileInputRef.current.click()}
             >
-              📎 Prikaci dokument (PDF, Word, JPG)
+              📎 Прикачи документ (PDF, Word, JPG)
             </button>
  
             {attachments.length > 0 && (
@@ -265,7 +265,7 @@ export default function Compose() {
           </div>
  
           <div className="compose-field">
-            <label>Isprati do (e-mail adresi) <span className="req">*</span></label>
+            <label>Испрати до (e-mail адреси) <span className="req">*</span></label>
             <div className={`email-chip-box${emailError ? " email-chip-box--error" : ""}`}>
               {emails.map((email, idx) => (
                 <span key={idx} className="email-chip">
@@ -280,18 +280,18 @@ export default function Compose() {
                 onChange={(e) => { setEmailInput(e.target.value); setEmailError(""); }}
                 onKeyDown={handleEmailKeyDown}
                 onBlur={() => { if (emailInput.trim()) addEmail(); }}
-                placeholder={emails.length === 0 ? "Vnesete e-mail i pritisnete Enter..." : ""}
+                placeholder={emails.length === 0 ? "Внесете e-mail и притиснете Enter..." : ""}
               />
             </div>
             {emailError && <span className="field-error">{emailError}</span>}
-            <span className="field-hint">Pritisnete Enter ili zapirka za da dodadete poveke adresi.</span>
+            <span className="field-hint">Притиснете Enter или запирка за да додадете повеќе адреси.</span>
           </div>
  
         </div>
  
         <div className="compose-footer">
-          <button className="btn btn-ghost" onClick={handleClear}>Iscisti</button>
-          <button className="btn btn-primary" onClick={handleSend}>Isprati telegrama →</button>
+          <button className="btn btn-ghost" onClick={handleClear}>Исчисти</button>
+          <button className="btn btn-primary" onClick={handleSend}>Испрати телеграма →</button>
         </div>
       </div>
     </div>
