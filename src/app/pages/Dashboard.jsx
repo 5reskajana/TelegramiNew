@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../index.css";
 import "./Dashboard.css";
 import TelegramModal from "../pages/TelegramModal";
+import AllTelegramsModal from "../pages/AllTelegramsModal";
 import {
   CURRENT_USER,
   MOCK_TELEGRAMS,
@@ -22,6 +23,7 @@ export default function Dashboard() {
   const [quickFilter,  setQuickFilter]  = useState("all"); // "all" | "active"
   const [filtersOpen,  setFiltersOpen]  = useState(false);
   const [selectedId,   setSelectedId]   = useState(null);
+  const [showAllModal, setShowAllModal] = useState(false);
 
   const inbox    = MOCK_TELEGRAMS.filter((t) => t.folder === "inbox");
   const unread   = inbox.filter((t) => t.status === "UNREAD");
@@ -104,7 +106,7 @@ export default function Dashboard() {
           </div>
           <div className="stat-value">{unread.length}</div>
           <div className="stat-label">Активни телеграми</div>
-          <div className="stat-sub">непрочитани во сандаче</div>
+        
         </div>
 
         <div className="stat-card stat-inactive" onClick={() => navigate("/archived")}>
@@ -115,7 +117,7 @@ export default function Dashboard() {
           </div>
           <div className="stat-value">{archived.length}</div>
           <div className="stat-label">Неактивни телеграми</div>
-          <div className="stat-sub">архивирани</div>
+         
         </div>
       </div>
 
@@ -127,18 +129,17 @@ export default function Dashboard() {
           </svg>
           Испрати нова телеграма
         </button>
-        <button className="btn btn-ghost" onClick={() => navigate("/inbox")}>Види сандаче</button>
-        <button className="btn btn-ghost" onClick={() => navigate("/drafts")}>Отвори нацрти</button>
-        <button className="btn btn-ghost" onClick={() => navigate("/archived")}>Архивирани телеграми</button>
+      
       </div>
 
       {/* ── INBOX CARD ── */}
       <div className="card">
         <div className="card-header">
           <span className="card-title">Сандаче</span>
-          <button className="btn btn-ghost" style={{ fontSize: 11, padding: "5px 12px" }} onClick={() => navigate("/inbox")}>
+          <button className="btn btn-ghost" style={{ fontSize: 11, padding: "5px 12px" }}
+            onClick={() => setShowAllModal(true)}>
             Види ги сите
-          </button>
+</button>
         </div>
 
         {/* ── SEARCH BAR ── */}
@@ -300,6 +301,11 @@ export default function Dashboard() {
           telegramaId={selectedId}
           onClose={() => setSelectedId(null)}
         />
+      )}
+
+      {/* ── ALL TELEGRAMS MODAL ── */}        
+      {showAllModal && (
+        <AllTelegramsModal onClose={() => setShowAllModal(false)} />
       )}
 
     </div>

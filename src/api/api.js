@@ -1,6 +1,6 @@
 import axios from "axios";
  
-const API_BASE = "http://192.168.102.61:8080/nm";
+const API_BASE = "http://localhost:9090/telegrami-api/nm";
  
 export const getAllActive = async () => {
   const response = await axios.get(`${API_BASE}/getAllActive`);

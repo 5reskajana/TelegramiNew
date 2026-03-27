@@ -1,0 +1,102 @@
+/* ── OVERLAY ──────────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15, 32, 53, 0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+/* ── BOX ──────────────────────────────────────────────── */
+
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #dde3ed;
+  box-shadow: 0 20px 60px rgba(15, 32, 53, 0.2);
+  width: 90%; max-width: 760px;
+  max-height: 82vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1.5px solid #eef1f6;
+  background: #fff;
+}
+
+.modal-header h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 17px; font-weight: 400;
+  color: #0f2035; margin: 0;
+}
+
+.modal-close {
+  background: none; border: none; cursor: pointer;
+  color: #8a9bb0; font-size: 14px;
+  padding: 6px 8px; border-radius: 6px;
+  line-height: 1; transition: all 0.15s;
+}
+.modal-close:hover {
+  background: #eef1f6;
+  color: #0f2035;
+}
+
+/* ── PILLS BAR ────────────────────────────────────────── */
+
+.modal-pills {
+  display: flex; align-items: center; gap: 6px;
+  padding: 14px 24px;
+  border-bottom: 1.5px solid #eef1f6;
+  background: #f4f6f9;
+}
+
+.modal-count {
+  margin-left: auto;
+  font-size: 11px; font-weight: 600;
+  color: #6b7a90;
+  letter-spacing: 0.03em;
+}
+
+/* ── BODY ─────────────────────────────────────────────── */
+
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0;
+}
+
+/* scrollbar */
+.modal-body::-webkit-scrollbar { width: 5px; }
+.modal-body::-webkit-scrollbar-track { background: #f4f6f9; }
+.modal-body::-webkit-scrollbar-thumb {
+  background: #dde3ed;
+  border-radius: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover { background: #0f2035; }
+
+/* ── LOADING / EMPTY / ERROR ──────────────────────────── */
+
+.modal-state {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 52px 20px; gap: 10px;
+  color: #b0bbc9; font-size: 13px;
+}
+.modal-state.error { color: #ef4444; }
+
+/* ── LOADING SPINNER ──────────────────────────────────── */
+
+.modal-spinner {
+  width: 28px; height: 28px;
+  border: 2.5px solid #eef1f6;
+  border-top-color: #0f2035;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
